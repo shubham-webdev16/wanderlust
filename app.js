@@ -89,6 +89,9 @@ app.use((req, res, next) => {
 app.use("/", userRouter);
 app.use("/listings", listings);
 app.use("/listings/:id/reviews", reviews);
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+});
 
 // ---------------- ERROR HANDLING ----------------
 app.all("splat", (req, res, next) => {
@@ -100,8 +103,9 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render("error.ejs", { message });
 });
 
-app.listen(8080, () => {
-  console.log("Server is listening to port 8080");
+const port = process.env.PORT;
+app.listen(port, () =>{
+  console.log(`Server is listening to port ${port}`);
 });
 
 
