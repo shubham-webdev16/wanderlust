@@ -20,25 +20,32 @@ const geocoding = async (location) => {
 
 
 const updateAllListings = async () => {
-  console.log("MongoDB connected for updating listings");
+  try {
+    console.log("MongoDB connected for updating listings");
 
-  const listings = await Listing.find({});
-  for (let listing of listings) {
-    const geometry = await geocoding(listing.location);
-    if (geometry) {
-      listing.geometry = geometry;
-      await listing.save();
-      console.log("Updated:", listing.title);
-    } else {
-      console.log("Not Found:", listing.title);
+    const listings = await Listing.find({});
+    for (let listing of listings) {
+      const geometry = await geocoding(listing.location);
+      if (geometry) {
+        listing.geometry = geometry;
+        await listing.save();
+        console.log("Updated:", listing.title);
+      } else {
+        console.log("Not Found:", listing.title);
+      }
     }
-  }
 
-  mongoose.connection.close();
-  console.log("All done!");
+    mongoose.connection.close();
+    console.log("All done!");
+  } catch (err) {
+    console.error("Error updating listings:", err.message);
+    mongoose.connection.close();
+  }
 };
 
-module.exports = {geocoding, updateAllListings};
+module.exports = { geocoding, updateAllListings };
+
+
 
 
 

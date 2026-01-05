@@ -2,6 +2,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const axios = require("axios");
 const Listing = require("../models/listing"); 
+const { geocoding } = require("../utils/geocoding");
 // relative path from seeds folder
 
 const dbUrl = process.env.ATLASDB_URL;
@@ -14,7 +15,7 @@ async function main() {
     try {
       const listings = await Listing.find({});
       for (let listing of listings) {
-        const geometry = await geocode(listing.location);
+        const geometry = await geocoding(listing.location);
         if (geometry) {
           listing.geometry = geometry;
           await listing.save();
@@ -39,7 +40,7 @@ async function main() {
 
 main();
 // Geoapify geocoding function
-const geocode = async (location) => {
+const geocoding = async (location) => {
   if (!location) return null;
   try {
     const res = await axios.get("https://api.geoapify.com/v1/geocode/search", {
